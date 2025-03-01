@@ -1,0 +1,77 @@
+useRouter를 import 할 때 next/navigation은 app router 전용으로 page router와 호환이 안될 수 있음
+
+const router = useRouter();
+console.log(router)를 했을 때 router 객체가 콘솔에 두 번 찍히는걸 볼 수 있는데,
+이는 next app이 쿼리스트링을 읽는 과정에서 컴포넌트를 한 번 더 렌더링 하기 때문
+
+그래서 두 번째 console.log()에만 query에 쿼리스트링에 대한 내용이 담겨있음
+
+페이지의 url을 /book/123/456/789... 이런 식으로 뒤에 여러 [id] 값이 들어올 때,
+파일 명을 /book/[...id].tsx 로 지으면 book 뒤에 여러 아이디가 연달아 나올 수 있으며,
+이를 모두 대응할 수 있게 됨
+
+이 때 id의 로그를 찍어보면 배열 형태로 저장되어 있는 것을 확인 가능함
+
+이러한 경로를 catch all segment라고 부름(모든 구간에 대응하는 페이지를 만들겠다)
+
+그런데 만약 뒤에 id값이 없는 /book 으로 이동해도 같은 페이지를 띄우고 싶으면,
+[...id]를 대괄호로 한 번 더 묶어서 [[...id]].tsx로 만들면 모든 url에 대해 대응 가능함
+
+이를 optional catch all segment라고 부름
+
+<a></a> 태그는 클라이언트 사이드 렌더링 방식으로 페이지를 이동시키는 것이 아닌
+서버에게 매번 새로운 페이지를 요청하는 방식으로 이동시킴
+
+<hr />
+
+//
+
+<Link> 컴포넌트는 클라이언트 사이드 렌더링 방식으로 페이지를 이동시킴
+
+프로그래매틱한 페이지 이동(특정 버튼이나 조건을 만족했을 때 함수 내부에서 페이지를 이동시키는 방식)
+router.push 또한 CSR 방식으로 이동
+
+
+pre-fetching
+사용자가 현재 페이지에서 이동할 가능성이 있는 페이지를 사전에 불러 놓는 기능
+
+next는 번들링을 할 때 현재 페이지에 필요한 JS Bundle만 전달이 됨
+만약 모든 페이지의 번들 파일을 전달할 경우 용량이 너무 커지게 되며 Hydration이 늦어짐(TTI가 늦어짐으로 연결)
+
+그렇지만 현재 페이지에 필요한 JS Bundle만 있으면 사용자가 페이지를 이동할 때 마다 Bundle을 받아야 해서
+비 효율적인 페이지 이동이 발생할 수 있음. 그렇기 때문에 next에서 pre-fetching 기능을 제공함
+
+> 개발모드에서는 pre-fetching을 확인할 수 없으므로 npm run build 후 npm run start로 production 환경에서 확인가능함
+
+<Link> 컴포넌트로 이루어지지 않은 경로는 pre-fetching이 일어나지 않음
+그러므로 router.push같은 프로그래매틱한 페이지 이동에 pre-fetching을 적용하려면
+```js
+useEffect(()=>{
+    router.prefetch('/test');
+},[])
+```
+를 작성해서 화면이 마운트 되었을 때 프로그래매틱 페이지 이동에도 pre-fetching을 적용할 수 있음
+
+<hr />
+
+만약 Link 컴포넌트의 pre-fetching을 해제하고 싶다면 `<Link href={"/경로"} prefetch={false}>경로</Link>`
+를 추가해주면 됨
+
+
+<hr />
+
+// API Routes
+
+api폴더 아래 작성된 파일은 페이지 파일이 아닌 api 응답을 정의한 내용이 있음.
+예를 들어 /api/time.ts를 만들고 /api/time 으로 요청을 보내면, 그 안의 handler에 정의된 내용이 실행됨
+
+
+<hr />
+
+// css module
+
+next에서는 페이지별로 css의 클래스 네임이 겹치는 문제를 원천 차단해버림
+css파일을 만들 때 그냥 index.css로 만들어서 직접 import 하지 않고, index.module.css로 만든 뒤
+`import style from "./index.module.css";`
+이렇게 import 한 다음 <h1 className={style.h1}>인덱스 h1</h1> 과 같이 사용하면, 
+클래스 네임을 유니크한 값으로 생성해 주어서, 페이지별로 클래스 네임이 겹쳐서 발생할 수 있는 문제가 해결됨
