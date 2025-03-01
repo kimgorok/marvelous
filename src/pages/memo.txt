@@ -75,3 +75,33 @@ css파일을 만들 때 그냥 index.css로 만들어서 직접 import 하지 �
 `import style from "./index.module.css";`
 이렇게 import 한 다음 <h1 className={style.h1}>인덱스 h1</h1> 과 같이 사용하면, 
 클래스 네임을 유니크한 값으로 생성해 주어서, 페이지별로 클래스 네임이 겹쳐서 발생할 수 있는 문제가 해결됨
+
+<hr />
+
+// 페이지별 레이아웃 적용하기
+
+특정 페이지에만 레이아웃을 적용하기 위해서 먼저 적용시킬 레이아웃 컴포넌트에 children을 설정하고
+```js
+export default function OptionalLayout({children}: {children: ReactNode}) {
+  return (
+    <div>
+      <div>특정 페이지 레이아웃</div>
+      {children}
+    </div>
+  );
+}
+```
+
+적용 시킬 컴포넌트 하단에 다음과 같이 컴포넌트.getLayout를 만든다.
+getLayout 메서드는 page라는 매개변수로 page 역할을 할 컴포넌트를 받아와서
+별도의 레이아웃으로 감싸진 레이아웃이 적용된 페이지를 return 해줌
+Home.getLayout = (page: ReactNode) => {
+  return <OptionalLayout>{page}</OptionalLayout>;
+};
+
+그리고 최종적으로 루트 디렉토리의 _app.tsx로 가서
+export default function App({ Component, pageProps }: AppProps) {
+  const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
+  return <>{getLayout(<Component {...pageProps} />)}</>;
+}
+와 같이 getLayout으로 감싸면 사용 가능
