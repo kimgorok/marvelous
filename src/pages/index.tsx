@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import style from "./index.module.css";
 import SearchableLayout from "@/components/searchable-layout";
 import BookItem from "@/components/book-item";
-import { InferGetServerSidePropsType } from "next";
+import { InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import fetchRandomBooks from "@/lib/fetch-random-books";
 
@@ -11,8 +11,19 @@ import fetchRandomBooks from "@/lib/fetch-random-books";
 // 그 다음 next가 객체를 읽어 와서 객체 안에 있는 props라는 property의 값을 페이지 컴포넌트에 전달
 
 // 🔥 getServerSideProps함수는 사전 렌더링 과정에서 딱 한 번만 실행됨 => 오직 서버 측에서만 실행되는 함수
-export const getServerSideProps = async () => {
-  // Promise.all: 인수로 전달한 배열 안에 들어있는 모든 비동기 함수를 동시에 실행시켜주는 메서드
+// export const getServerSideProps = async () => {
+//   // Promise.all: 인수로 전달한 배열 안에 들어있는 모든 비동기 함수를 동시에 실행시켜주는 메서드
+//   const [allBooks, recoBooks] = await Promise.all([
+//     fetchBooks(),
+//     fetchRandomBooks(),
+//   ]);
+//   return {
+//     props: { allBooks, recoBooks },
+//   };
+// };
+
+export const getStaticProps = async () => {
+  console.log("인덱스 페이지");
   const [allBooks, recoBooks] = await Promise.all([
     fetchBooks(),
     fetchRandomBooks(),
@@ -25,8 +36,7 @@ export const getServerSideProps = async () => {
 export default function Home({
   allBooks,
   recoBooks,
-}: // InferGetServerSidePropsType은 getServerSideProps 함수의 반환 값의 타입을 자동으로 추론
-InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <div className={style.container}>
       <section>
