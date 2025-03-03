@@ -5,6 +5,7 @@ import BookItem from "@/components/book-item";
 import { InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import fetchRandomBooks from "@/lib/fetch-random-books";
+import Head from "next/head";
 
 // 컴포넌트보다 먼저 실행되어, 컴포넌트에 필요한 데이터를 불러오는 함수
 // 객체를 반환해야 함(객체 타입의 props property가 있어야 함)
@@ -23,7 +24,6 @@ import fetchRandomBooks from "@/lib/fetch-random-books";
 // };
 
 export const getStaticProps = async () => {
-  console.log("인덱스 페이지");
   const [allBooks, recoBooks] = await Promise.all([
     fetchBooks(),
     fetchRandomBooks(),
@@ -38,20 +38,31 @@ export default function Home({
   recoBooks,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
-    <div className={style.container}>
-      <section>
-        <h3>지금 추천하는 도서</h3>
-        {recoBooks.map((book) => (
-          <BookItem key={book.id} {...book} />
-        ))}
-      </section>
-      <section>
-        <h3>등록된 모든 도서</h3>
-        {allBooks.map((book) => (
-          <BookItem key={book.id} {...book} />
-        ))}
-      </section>
-    </div>
+    <>
+      <Head>
+        <title>😎현중 책방</title>
+        <meta property="og:image" content="'/thumbnail.png" />
+        <meta property="og:title" content="😎현중 책방" />
+        <meta
+          property="og:description"
+          content="😎현중 책방입니다. 편안하게 둘러보세요"
+        />
+      </Head>
+      <div className={style.container}>
+        <section>
+          <h3>지금 추천하는 도서</h3>
+          {recoBooks.map((book) => (
+            <BookItem key={book.id} {...book} />
+          ))}
+        </section>
+        <section>
+          <h3>등록된 모든 도서</h3>
+          {allBooks.map((book) => (
+            <BookItem key={book.id} {...book} />
+          ))}
+        </section>
+      </div>
+    </>
   );
 }
 
