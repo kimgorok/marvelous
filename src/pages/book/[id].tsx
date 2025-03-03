@@ -30,7 +30,7 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
 
   if (!book) {
     return {
-      nonFound: true,
+      notFound: true,
     };
   }
   return {

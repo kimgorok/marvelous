@@ -1,0 +1,47 @@
+# ISR(Incremental Static Regeneration, 증분 정적 재생성)
+
+- SSG 방식으로 생성된 정적 페이지를 일정 시간을 주기로 다시 생성하는 기술
+
+```js
+export const getStaticProps = async () => {
+  const [allBooks, recoBooks] = await Promise.all([
+    fetchBooks(),
+    fetchRandomBooks(),
+  ]);
+  return {
+    props: { allBooks, recoBooks },
+    revalidate: 3,
+  };
+};
+```
+
+다음과 같이 return문에 revalidate를 추가하고 몇 초 주기로 재검증 할 지 적어주면 됨
+
+### ISR을 적용하기 어려운 페이지
+
+- 시간과 관계 없이 사용자의 행동에 따라 데이터가 업데이트 되는 페이지
+
+# On-Demand ISR
+
+- 요청을 받을 때 마다 페이지를 다시 생성하는 ISR
+
+```js
+// /api/revalidate.ts
+
+import { NextApiRequest, NextApiResponse } from "next";
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  try {
+    await res.revalidate("/"); // 어디에 On-Demand ISR을 적용할지
+    return res.json({ revalidate: true });
+  } catch (err) {
+    res.status(500).send("Revalidation Failed" + err);
+  }
+}
+```
+
+다음과 같이 On-Demand ISR이 필요한 페이지에 api handler를 작성하여
+사용자가 handler에 요청을 할 때 마다 SSG 페이지를 재생성시킬 수 있음
