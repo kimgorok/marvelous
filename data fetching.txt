@@ -14,3 +14,38 @@ export async function Page(props){
 이 async await이 기존의 getServerSideProps, getStaticProps를 대체
 
 데이터가 필요한 컴포넌트가 직접 데이터를 fetch하면 됨
+
+# 데이터 캐시
+
+fetch 메서드를 활용해 불러온 데이터를 Next 서버에서 보관하는 기능
+영구적으로 데이터를 보관하거나, 특정 시간을 주기로 갱신 시키는 것도 가능
+
+### { cache: "force-cache" }
+
+```js
+const response = await fetch(`~/api`, { cache: "force-cache" });
+```
+
+cache: "force-cache"
+- 요청의 결과를 무조건 캐싱함
+- 한번 호출 된 후에는 다시 호출되지 않음
+
+### { cache: "no-store" } (기본값)
+
+- 데이터 페칭의 결과를 저장하지 않는 옵션
+- 캐싱을 아예 하지 않도록 설정
+
+### { cache: "force-cache" }
+
+- 요청의 결과를 무조건 캐싱함
+- 한번 호출 된 이후에는 다시는 호출되지 않음
+
+### { next: {revalidate: 3} }
+
+- 특정 시간을 주기로 캐시를 업데이트 함
+- Page Router의 ISR 방식과 유사함
+
+### { next: { tag: ['a'] } }
+
+- On-Demand Revalidate
+- 요청이 들어왔을 때 데이터를 최신화 함
