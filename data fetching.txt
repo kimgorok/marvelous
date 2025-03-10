@@ -20,6 +20,8 @@ export async function Page(props){
 fetch 메서드를 활용해 불러온 데이터를 Next 서버에서 보관하는 기능
 영구적으로 데이터를 보관하거나, 특정 시간을 주기로 갱신 시키는 것도 가능
 
+서버 가동중에는 영구적으로 보관됨
+
 ### { cache: "force-cache" }
 
 ```js
@@ -49,3 +51,8 @@ cache: "force-cache"
 
 - On-Demand Revalidate
 - 요청이 들어왔을 때 데이터를 최신화 함
+
+# Request Memoization (요청을 기억한다)
+
+하나의 페이지를 렌더링 하는 동안에 중복된 API 요청을 캐싱하기 위해 존재함
+렌더링이 종료되면 모든 캐시가 소멸됨, 자동으로 동작함
