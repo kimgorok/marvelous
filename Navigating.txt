@@ -1,0 +1,2 @@
+# app router의 pre-fetching
+
