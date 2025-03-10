@@ -1,0 +1,16 @@
+# app router에서의 데이터 페칭 변경점
+
+// 서버 컴포넌트 ( + 비동기 함수)
+```js
+export async function Page(props){
+    const data = await fetch('...');
+
+    return <div>...</div>
+}
+```
+클라이언트 컴포넌트에서는 Async 키워드를 사용할 수 없었음
+: 브라우저에서 동작시 문제를 일으킬 수 있기 때문에 권장되지 않음
+
+이 async await이 기존의 getServerSideProps, getStaticProps를 대체
+
+데이터가 필요한 컴포넌트가 직접 데이터를 fetch하면 됨
