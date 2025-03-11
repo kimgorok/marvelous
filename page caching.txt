@@ -1,0 +1,65 @@
+# 풀 라우트 캐시
+
+Next 서버측에서 빌드 타임에 특정 페이지의 렌더링 결과를 캐싱하는 기능
+
+### Dynamic Page로 설정되는 기준
+
+- 특정 페이지가 접속 요청을 받을 때마다 매번 변화가 생기거나, 데이터가 달라질 경우
+1. 캐시되지 않는 Data Fetching을 사용할 경우
+2. 동적 함수(쿠키, 헤더, 쿼리스트링)을 사용하는 컴포넌트가 있을 때
+
+# Suspense(미결, 미완성)
+
+```js
+      <Suspense fallback={<div>Loading...</div>}>
+        <Searchbar />
+      </Suspense>
+```
+
+빌드 시 클라이언트 측에서만 렌더링 되어야하는 컴포넌트는 React의 <Suspense>로 감싸야 함
+
+Suspense 컴포넌트의 역할은 미완성 하위 컴포넌트의 비동기 작업이 완료될 때까지 미완성 상태로 남아있게함
+
+# generateStaticParams()
+
+정적인 파라미터를 생성하는 함수
+```js
+export function generateStaticParams() {
+  return [{ id: "1" }, { id: "2" }, { id: "3" }]; // 문자열로만 명시
+}
+```
+이렇게 하면 빌드 타임에 Next.js 서버가 자동으로 정적 파라미터들을 읽어서 파라미터에 해당하는
+page를 정적으로 만듦
+
+단, generateStaticParams()이 있는 페이지의 Data Fetching은 무조건 강제 캐싱하게 됨
+
+generateStaticParams()함수 위에 export const dynamicParams = false;를 추가하면
+정적인 파라미터 외의 url 파라미터 페이지는 생성하지 않고 404 페이지로 보내버림
+
+<br />
+<hr />
+
+# 라우트 세그먼트 옵션
+
+```js
+export const dynamic = '';
+```
+특정 페이지의 유형을 강제로 Static, Dynamic 페이지로 설정
+
+1. auto: 기본값, 아무것도 강제하지 않음
+2. force-dynamic: 페이지를 강제로 Dynamic 페이지로 설정
+3. force-static: 페이지를 강제로 Static 페이지로 설정, 이 때 내부의 쿼리스트링같은 동적 함수들은
+모두 다 undefined, 즉 빈값을 반환하도록 설정 됨. Data Fetching도 강제로 캐싱 되도록 바뀜
+4. error: 페이지를 강제로 Static 페이지로 설정 (설정하면 안되는 이유가 있다면 빌드 오류 발생시킴)
+
+<br />
+<hr />
+
+
+# 클라이언트 라우터 캐시
+
+- 브라우저에 저장되는 캐시
+페이지 이동을 효율적으로 진행하기 위해 페이지의 일부 데이터를 보관함
+
+레이아웃에 해당하는 RSC payload를  부분만 따로 클라이언트 라우터 캐시에 보관해서, 
+같은 레이아웃을 요청하는 빠르게 불러옴
