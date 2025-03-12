@@ -5,7 +5,7 @@
 
 다이나믹 페이지는 풀 라우트 캐시에 저장이 안되고 api 요청이 오래걸려 스트리밍을 적용함
 
-page.tsx와 같은 위치에 loading.tsx 파일을 만들어 주면, 그 페이지는 스트리밍이 적용됨
+page.tsx와 같은 경로에 loading.tsx 파일을 만들어 주면, 그 페이지는 스트리밍이 적용됨
 layout.tsx와 같이 해당 경로 하위에 다 로딩.tsx가 적용됨.
 스트리밍은 async를 사용하고 있는 page 비동기 컴포넌트에만 적용됨
 
@@ -22,3 +22,48 @@ layout.tsx와 같이 해당 경로 하위에 다 로딩.tsx가 적용됨.
 fallback에 작성한 로딩 상태를 표시할 수 있음
 
 > react-loading-skeleton이라는 스켈레톤을 자동으로 만들어주는 라이브러리도있음
+
+# error.tsx
+layout.tsx와 같이 page.tsx와 같은 경로에 error.tsx 파일을 만들어주면, 해당 페이지에서
+발생할 모든 에러를 공통적으로 처리할 수 있음.
+error.tsx는 "use client"와 함께 작성되어야 함.
+
+이 Error 파일에는 Props로 error를 전달하고, 이 error에는 현재 발생한 모든 에러의 정보가
+담겨져 있음
+
+두 번째 Props인 reset Props는 에러가 발생한 페이지를 복구하기 위해서 다시 컴포넌트를 렌더링 
+시켜보는 기능을 가진 함수. 단, 클라이언트 컴포넌트 내부에서 발생한 오류만 재시도함
+
+```js
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error;
+  reset: () => void;
+}) {
+  const router = useRouter();
+
+  useEffect(() => {
+    console.error(error.message);
+  }, [error]);
+  return (
+    <div>
+      <h3>오류가 발생했습니다</h3>
+      <button
+        onClick={() => {
+          router.refresh(); // 현재 페이지에 필요한 서버 컴포넌트들을 다시 불러옴
+          reset(); // 에러 상태를 초기화, 컴포넌트들을 다시 렌더링
+        }}
+      >
+        다시 시도
+      </button>
+    </div>
+  );
+}
+```
