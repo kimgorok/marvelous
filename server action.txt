@@ -47,3 +47,42 @@ revalidatePath(`/book/${bookId}`);
 * revalidatePath메서드는 서버측에서만 호출할 수 있는 메서드
 revalidatePath메서드는 해당 경로에 해당하는 페이지를 전부 재검증하는 메서드이기 때문에
 해당 페이지에 있는 모든 캐시(풀 라우트 캐시 포함)를 강제로 무효화 시킴.
+
+<br />
+<hr />
+
+revalidatePath에는 두 번째 인자로 전달할 수 있는 layout과 path 옵션이 있음
+
+1. 특정 주소의 해당하는 페이지만 재검증
+
+```js
+revalidatePath(`/book/${bookId}`);
+```
+
+2. 특정 경로의 모든 동적 페이지를 재검증
+```js
+revalidatePath(`/book/[id]`, 'page');
+```
+
+3. 특정 레이아웃을 갖는 모든 페이지 재검증
+```js
+revalidatePath("/(with-searchbar)", "layout");
+// 위드 서치바 레이아웃을 갖는 모든 페이지 재검증
+```
+
+4. 모든 데이터 재검증
+```js
+revalidatePath("/", "layout");
+```
+
+5. 태그 기준, 데이터 캐시 재검증
+```js
+// 데이터 페치 부분에 cache 옵션으로 태그 설정
+  const response = await fetch(
+    `api/review/book/${bookId}`,
+    { next: { tags: [`review-${bookId}`] } }
+  );
+
+// revalidate 부분에서
+revalidateTag(`review-${bookId}`);
+```
