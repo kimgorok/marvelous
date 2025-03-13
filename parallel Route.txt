@@ -1,0 +1,39 @@
+# 병렬 라우트(Parallel Route)
+
+여러 개의 페이지(page.tsx)를 병렬로 렌더링 시키는 패턴
+(패러렐 폴더 이미지)
+
+## 슬롯(Slot)
+병렬로 렌더링 될 페이지 컴포넌트를 보관할 폴더. 폴더 앞에 @를 붙임.
+이 폴더 안에 보관된 페이지 컴포넌트는 부모 레이아웃에게 props로 전달됨, 이 때 prop의 이름은
+폴더의 이름이 됨. 이 폴더는 url 경로에 영향을 주지 않음
+(그 동안의 children도 사실 @children/page.tsx와 같은 역할)
+
+```jsx
+import Link from "next/link";
+import { ReactNode } from "react";
+
+export default function Layout({
+  children,
+  feed,
+  sidebar,
+}: {
+  children: ReactNode;
+  feed: ReactNode;
+  sidebar: ReactNode;
+}) {
+  return (
+    <div>
+      <div>
+        <Link href={"/parallel"}>패러렐</Link>
+        &nbsp;
+        <Link href={"/parallel/setting"}>패러렐세팅</Link>
+      </div>
+      <br />
+      {sidebar}
+      {feed}
+      {children}
+    </div>
+  );
+}
+```
