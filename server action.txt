@@ -86,3 +86,29 @@ revalidatePath("/", "layout");
 // revalidate 부분에서
 revalidateTag(`review-${bookId}`);
 ```
+
+# useActionState
+
+useActionState훅의 첫 번째 인자로는 action 함수, 두 번째 인자로는 초기값을 보냄
+
+React 19에서 등장한 새로운 훅 :
+1. useActionState 
+useActionState 훅은 form 태그의 상태를 추적해서, form이 제출될 때 발생하는 비동기 
+작업에 따른 상태를 자동으로 업데이트합니다. 
+이 훅은 다음과 같은 형태를 가집니다. 
+
+const [상태, 제출함수, is펜딩] = useActionState({비동기 함수}, 상태 기본값); 
+
+먼저 두 번째 요소인 제출함수는 form 태그의 action 속성에 핸들러로 넣습니다. 
+이렇게 하여 해당 form이 submit 될 때 제출함수 가 실행 되게 합니다. 
+그리고 상태 는 useActionState 의 {비동기 함수} 로 실행한 결과의 값이 들어가게 됩니다. 
+{비동기 함수} 실행 전에는 상태 기본값 이 상태 의 초값이 됩니다. 
+그리고 이러한 작업이 실행되는 동안 is펜딩 이 true가 되고 작업이 끝나면 is펜딩이 
+false가 되어 함수 실행 동안의 조건부 렌더링을 적용할 수 있습니다.
+
+2. useOptimistic 
+useOptimistic 훅은 이름에서 알 수 있듯이 낙관적 UI 업데이트를 도와주는 훅입니다. 이 훅은 다음과 같은 형태를 가집니다. 
+
+const [네임, set네임] = useState(’’); const [낙관네임, set낙관네임] = useOptimistic(네임) 
+
+그리고 렌더링 부분에는 네임 이 아닌 낙관네임 을 사용합니다. 이렇게 상태를 선언한 뒤 비동기 작업이 실행되고 성공 시 반환 될 것 같은 값을 set낙관네임 의 인자로 넣습니다. 그리고 실제로 작업이 끝나고 반환 된 값을 set네임 의 인자로 넣습니다. 이렇게 사용하면 사용자는 함수를 실행할 때 즉각적으로 UI의 업데이트를 경험할 수 있습니다.
