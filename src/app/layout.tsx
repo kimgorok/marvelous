@@ -34,11 +34,12 @@ export default function RootLayout({
       <body>
         <div className={style.container}>
           <header>
-            <Link href={"/"}>📚 ONEBITE BOOKS</Link>
+            <Link href={"/"}>📚 현중 책방</Link>
           </header>
           <main>{children}</main>
           <Footer />
         </div>
+        <div id="modal-root" />
       </body>
     </html>
   );
