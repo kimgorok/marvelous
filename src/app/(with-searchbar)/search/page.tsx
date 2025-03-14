@@ -2,6 +2,7 @@ import BookItem from "@/components/book-item";
 import BookListSkeleton from "@/components/skeleton/book-list-skeleton";
 import { BookData } from "@/types";
 import { delay } from "@/util/delay";
+import { Metadata } from "next";
 import { Suspense } from "react";
 
 async function SearchResult({ q }: { q: string }) {
@@ -22,6 +23,21 @@ async function SearchResult({ q }: { q: string }) {
       ))}
     </div>
   );
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: {
+    q?: string;
+  };
+}) {
+  const { q } = await searchParams;
+  return {
+    title: `${q} : 현중책방 검색`,
+    description: `${q} : 현중책방 검색결과`,
+    images: ["/thumbnail.png"],
+  };
 }
 
 export default function Page({

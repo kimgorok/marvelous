@@ -4,6 +4,7 @@ import { BookData } from "@/types";
 import { delay } from "@/util/delay";
 import { Suspense } from "react";
 import BookListSkeleton from "@/components/skeleton/book-list-skeleton";
+import { Metadata } from "next";
 
 // NEXT_PUBLIC_API_SERVER_URL=http://localhost:12345
 
@@ -48,6 +49,16 @@ async function RecoBooks() {
 }
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "현중 책방",
+  description: "현중책방입니다",
+  openGraph: {
+    title: "현중 책방",
+    description: "현중책방입니다.",
+    images: ["/thumbnail.png"],
+  },
+};
 
 export default function Home() {
   return (

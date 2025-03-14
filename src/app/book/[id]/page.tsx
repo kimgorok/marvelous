@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import style from "./page.module.css";
-import { ReviewData } from "@/types";
+import { BookData, ReviewData } from "@/types";
 import ReviewItem from "@/components/review-item";
 import ReviewEditor from "@/components/review-editor";
 import { revalidatePath } from "next/cache";
@@ -67,6 +67,28 @@ async function ReviewList({ bookId }: { bookId: string }) {
       ))}
     </section>
   );
+}
+
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const { id } = await params;
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/${id}`
+  );
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  const book: BookData = await response.json();
+  return {
+    title: `${book.title} - 현중책방`,
+    description: `${book.description} - 현중책방`,
+    openGraph: {
+      title: `${book.title} - 현중책방`,
+      description: `${book.description} - 현중책방`,
+      images: [book.coverImgUrl],
+    },
+  };
 }
 
 export default function Page({ params }: { params: { id: string } }) {

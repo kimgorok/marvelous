@@ -1,0 +1,4 @@
+generateMetadata()
+
+현재 페이지 메타 데이터를 동적으로 생성하는 함수.
+Page가 전달받는 props를 그대로 전달받을 수 있음
