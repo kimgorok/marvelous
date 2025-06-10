@@ -17,7 +17,7 @@ export default function Error({
   }, [error]);
   return (
     <div>
-      <h3>검색 과정에서 오류가 발생했습니다</h3>
+      <h3>검색 과정에서 오류가 발생했습니다!</h3>
       <button
         onClick={() => {
           startTransition(() => {
